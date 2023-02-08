@@ -9,6 +9,8 @@ const audio = $('#audio')
 const playBtn = $('.btn-toggle-play')
 const player = $('.player')
 const progress = $('.progress')
+const nextBtn = $('.btn-next')
+const prevBtn = $('.btn-prev')
 
 const app = {
     currentIndexSong: 0,
@@ -84,6 +86,14 @@ const app = {
             cd.style.opacity = newCdWidth / cdWidth
         }
 
+        const cdThumbAnimate = cdThumb.animate([
+          { transform: 'rotate(360deg)'}
+        ], {
+          duration: 10000,
+          iterations: Infinity
+        })
+        cdThumbAnimate.pause()
+
         // when click play button
         playBtn.onclick = () => {
             this.isPlaying ? audio.pause() : audio.play()
@@ -93,12 +103,14 @@ const app = {
         audio.onplay = () => {
             _this.isPlaying = true
             player.classList.add('playing')
+            cdThumbAnimate.play()
         }
 
         // when song is pause
         audio.onpause = () => {
             _this.isPlaying = false
             player.classList.remove('playing')
+            cdThumbAnimate.pause()
         }
 
         // progress value changes when song is playing
@@ -113,6 +125,18 @@ const app = {
         progress.onchange = (e) => {
           const seekTime = audio.duration / 100 * e.target.value
           audio.currentTime = seekTime
+        }
+
+        // next song
+        nextBtn.onclick = () => {
+          _this.nextSong()
+          audio.play()
+        }
+
+        // Prev song
+        prevBtn.onclick = () => {
+          _this.prevSong()
+          audio.play()
         }
         
     },
@@ -145,6 +169,20 @@ const app = {
             `
         })
         $('.playlist').innerHTML = htmls.join('')
+    },
+    nextSong() {
+      this.currentIndexSong++
+      if (this.currentIndexSong >= this.songs.length) {
+        this.currentIndexSong = 0
+      }
+      this.loadCurrentSong()
+    },
+    prevSong() {
+      this.currentIndexSong--
+      if (this.currentIndexSong < 0) {
+        this.currentIndexSong = this.songs.length - 1
+      }
+      this.loadCurrentSong()
     },
     start() {
         this.defineProperties()
