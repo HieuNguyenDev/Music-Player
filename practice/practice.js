@@ -79,6 +79,7 @@ const app = {
     ],
     handleEvents() {
         const _this = this
+        
         document.onscroll = () => {
             const scrollTop = window.scrollY || document.documentElement.scrollTop
             const newCdWidth = cdWidth - scrollTop
