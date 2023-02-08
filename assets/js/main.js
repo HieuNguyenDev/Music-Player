@@ -7,6 +7,7 @@ const audio = $('#audio')
 const cd = $(".cd");
 const player = $(".player");
 const playBtn = $('.btn-toggle-play')
+const progress = $('.progress')
 
 const app = {
   isPlaying: false,
@@ -98,11 +99,6 @@ const app = {
       }
     })
   },
-  loadCurrentSong() {
-    heading.textContent = this.currentSong.name
-    cdThumb.style.backgroundImage = `url(${this.currentSong.image})`
-    audio.src = this.currentSong.path
-  },
   handleEvents() {
     const _this = this
     const cdWidth = cd.offsetWidth;
@@ -123,12 +119,44 @@ const app = {
     audio.onplay = () => {
       _this.isPlaying = true
       player.classList.add('playing')
+      cdThumbAnimate.play()
     }
 
+    // pause song
     audio.onpause = () => {
       _this.isPlaying = false
       player.classList.remove('playing')
+      cdThumbAnimate.pause()
     }
+
+    // seek song
+    audio.ontimeupdate = () => {
+      if (audio.duration) {
+        const progressPercent = Math.floor(audio.currentTime / audio.duration * 100)
+        progress.value = progressPercent
+      }
+    }
+
+    // when seeking
+    progress.onchange = (e) => {
+      const seekTime = audio.duration / 100 * e.target.value
+      audio.currentTime = seekTime
+    }
+
+    // CD rotate
+    const cdThumbAnimate = cdThumb.animate([
+      { transform: 'rotate(360deg)'}
+    ], {
+      duration: 10000,
+      iterations: Infinity
+    })
+
+    cdThumbAnimate.pause()
+  },
+  loadCurrentSong() {
+    heading.textContent = this.currentSong.name
+    cdThumb.style.backgroundImage = `url(${this.currentSong.image})`
+    audio.src = this.currentSong.path
   },
   start() {
     this.handleEvents();

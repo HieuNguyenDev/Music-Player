@@ -2,14 +2,16 @@ const $ = document.querySelector.bind(document)
 const $$ = document.querySelectorAll.bind(document)
 
 const cd = $('.cd')
-const player = $('.player')
+const cdWidth = cd.offsetWidth
 const heading = $('header h2')
 const cdThumb = $('.cd-thumb')
 const audio = $('#audio')
 const playBtn = $('.btn-toggle-play')
+const player = $('.player')
+const progress = $('.progress')
 
 const app = {
-    currentIndex: 0,
+    currentIndexSong: 0,
     isPlaying: false,
     songs: [
         {
@@ -73,101 +75,83 @@ const app = {
           image: "../../assets/img/da-lo-yeu-em-nhieu.jpg",
         },
     ],
-    render() {
-      var htmls = this.songs.map(song => {
-        return `
-          <div class="song">
-            <div class="thumb" style="background-image: url('${song.image}')">
-            </div>
-            <div class="body">
-                <h3 class="title">${song.name}</h3>
-                <p class="author">${song.singer}</p>
-            </div>
-            <div class="option">
-                <i class="fas fa-ellipsis-h"></i>
-            </div>
-        </div>
-        `
-      })
-      $('.playlist').innerHTML = htmls.join('')
+    handleEvents() {
+        const _this = this
+        document.onscroll = () => {
+            const scrollTop = window.scrollY || document.documentElement.scrollTop
+            const newCdWidth = cdWidth - scrollTop
+            cd.style.width = newCdWidth > 0 ? newCdWidth + 'px' : 0
+            cd.style.opacity = newCdWidth / cdWidth
+        }
+
+        // when click play button
+        playBtn.onclick = () => {
+            this.isPlaying ? audio.pause() : audio.play()
+        }
+
+        // when song is playing
+        audio.onplay = () => {
+            _this.isPlaying = true
+            player.classList.add('playing')
+        }
+
+        // when song is pause
+        audio.onpause = () => {
+            _this.isPlaying = false
+            player.classList.remove('playing')
+        }
+
+        // progress value changes when song is playing
+        audio.ontimeupdate = () => {
+          if (audio.duration) {
+            const progressPercent = Math.floor(audio.currentTime / audio.duration * 100)
+            progress.value = progressPercent
+          }
+        }
+
+        // when change progress 
+        progress.onchange = (e) => {
+          const seekTime = audio.duration / 100 * e.target.value
+          audio.currentTime = seekTime
+        }
+        
     },
     defineProperties() {
-      Object.defineProperty(this, 'currentSong', {
-        get() {
-          return this.songs[this.currentIndex]
-        }
-      })
-    },
-    handleEvents() {
-      const _this = this
-      const cdWidth = cd.offsetWidth
-      document.onscroll = () => {
-        const scrollTop = window.scrollY || document.documentElement.scrollTop
-        const newCdWidth = cdWidth - scrollTop
-        cd.style.width = newCdWidth > 0 ? newCdWidth + 'px' : 0
-        cd.style.opacity = newCdWidth / cdWidth
-      }
-
-      const cdThumbAnimate = cdThumb.animate([
-        { transform: 'rotate(360deg)'}
-      ], {
-        duration: 10000,
-        iterations: Infinity
-      })
-      cdThumbAnimate.pause()
-
-      // Click Play
-      playBtn.onclick = () => {
-        if (_this.isPlaying) {
-          audio.pause()
-        } else {
-          audio.play()
-        }
-      }
-
-      audio.onplay = () => {
-        _this.isPlaying = true
-        player.classList.add('playing')
-        cdThumbAnimate.play()
-      }
-
-      audio.onpause = () => {
-        _this.isPlaying = false
-        player.classList.remove('playing')
-        cdThumbAnimate.pause()
-      }
-
-      // progress change when song is playing
-      audio.ontimeupdate = () => {
-        if (audio.duration) {
-          const progressPercent = Math.floor(audio.currentTime / audio.duration * 100)
-          progress.value = progressPercent
-        }
-      }
-
-      // playing with time changed
-      progress.onchange = (e) => {
-        const seekTime = audio.duration / 100 * e.target.value
-        audio.currentTime = seekTime
-      }
+        Object.defineProperty(this, 'currentSong', {
+            get() {
+                return this.songs[this.currentIndexSong]
+            }
+        })
     },
     loadCurrentSong() {
-      heading.textContent = this.currentSong.name
-      cdThumb.style.backgroundImage = `url(${this.currentSong.image})`
-      audio.src = this.currentSong.path
+        heading.textContent = this.currentSong.name
+        cdThumb.style.backgroundImage = `url(${this.currentSong.image})`
+        audio.src = this.currentSong.path
+    },
+    render() {
+        var htmls = this.songs.map(song => {
+            return `
+                <div class="song">
+                    <div class="thumb" style="background-image: url('${song.image}')">
+                    </div>
+                    <div class="body">
+                        <h3 class="title">${song.name}</h3>
+                        <p class="author">${song.singer}</p>
+                    </div>
+                    <div class="option">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </div>
+                </div>
+            `
+        })
+        $('.playlist').innerHTML = htmls.join('')
     },
     start() {
-      this.defineProperties()
-      this.handleEvents()
-      this.render()
-      this.loadCurrentSong()
+        this.defineProperties()
+        this.handleEvents()
+        this.loadCurrentSong()
+        this.render()
     }
 }
 
 app.start()
-
-/**
- * 1. render playlist 
- * 2. scroll zoom in - out cd
- * 3. load current song
- */
