@@ -1,3 +1,16 @@
+/**
+ * 1. Render songs
+ * 2. Scroll top
+ * 3. Play - pause - seek
+ * 4. CD rotate
+ * 5. Next - Prev
+ * 6. Random
+ * 7. Next - Repeat when ended
+ * 8. Active song
+ * 9. Scroll active song into view
+ * 10. Play song when click
+ */
+
 const $$ = document.querySelectorAll.bind(document);
 const $ = document.querySelector.bind(document);
 
@@ -10,9 +23,11 @@ const playBtn = $('.btn-toggle-play')
 const progress = $('.progress')
 const nextBtn = $('.btn-next')
 const prevBtn = $('.btn-prev')
+const randomBtn = $('.btn-random')
 
 const app = {
   isPlaying: false,
+  isRandom: false,
   currentIndex: 0,
   songs: [
     {
@@ -156,14 +171,20 @@ const app = {
 
     // Next song
     nextBtn.onclick = () => {
-      _this.nextSong()
+      _this.isRandom ? _this.randomSong() : _this.nextSong()
       audio.play()
     }
 
     // Prev song
     prevBtn.onclick = () => {
-      _this.prevSong()
+      _this.isRandom ? _this.randomSong() : _this.prevSong()
       audio.play()
+    }
+
+    // Random song
+    randomBtn.onclick = () => {
+      _this.isRandom = !_this.isRandom
+      randomBtn.classList.toggle('active', _this.isRandom)
     }
   },
   nextSong() {
@@ -178,6 +199,14 @@ const app = {
     if (this.currentIndex < 0) {
       this.currentIndex = this.songs.length - 1
     }
+    this.loadCurrentSong()
+  },
+  randomSong() {
+    let newIndex
+    do {
+      newIndex = Math.floor(Math.random() * this.songs.length)
+    } while (newIndex === this.currentIndex)
+    this.currentIndex = newIndex
     this.loadCurrentSong()
   },
   loadCurrentSong() {
