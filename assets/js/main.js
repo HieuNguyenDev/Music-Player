@@ -1,7 +1,15 @@
 const $$ = document.querySelectorAll.bind(document);
 const $ = document.querySelector.bind(document);
 
+const heading = $('header h2')
+const cdThumb = $('.cd-thumb')
+const audio = $('#audio')
+const cd = $(".cd");
+const player = $(".player");
+const playBtn = $('.btn-toggle-play')
+
 const app = {
+  isPlaying: false,
   currentIndex: 0,
   songs: [
     {
@@ -90,22 +98,43 @@ const app = {
       }
     })
   },
+  loadCurrentSong() {
+    heading.textContent = this.currentSong.name
+    cdThumb.style.backgroundImage = `url(${this.currentSong.image})`
+    audio.src = this.currentSong.path
+  },
   handleEvents() {
-    const cd = $(".cd");
+    const _this = this
     const cdWidth = cd.offsetWidth;
-
-    document.onscroll = function () {
+    document.onscroll = () => {
       const scrollTop = window.scrollY || document.documentElement.scrollTop;
       const newCdWidth = cdWidth - scrollTop;
 
       cd.style.width = newCdWidth > 0 ? newCdWidth + "px" : 0;
       cd.style.opacity = newCdWidth / cdWidth;
     };
+
+    // play song
+    playBtn.onclick = () => {
+      _this.isPlaying ? audio.pause() : audio.play()
+    }
+
+    // song is playing
+    audio.onplay = () => {
+      _this.isPlaying = true
+      player.classList.add('playing')
+    }
+
+    audio.onpause = () => {
+      _this.isPlaying = false
+      player.classList.remove('playing')
+    }
   },
   start() {
     this.handleEvents();
     this.defineProperties();
     this.render();
+    this.loadCurrentSong()
   },
 };
 
