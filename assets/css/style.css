@@ -1,5 +1,6 @@
 :root {
-    --primary-color: #ec1f55;
+    /* --primary-color: #ec1f55; */
+    --primary-color: #ad0ff5;
     --text-color: #333;
 }
 
@@ -38,7 +39,7 @@ html {
 
 .dashboard {
     padding: 16px 16px 14px;
-    background-color: #fff;
+    background-color: #e0e0e0;
     position: fixed;
     top: 0;
     width: 100%;
@@ -112,7 +113,6 @@ header h2 {
     width: 100%;
     -webkit-appearance: none;
     height: 6px;
-    background: #d3d3d3;
     outline: none;
     opacity: 0.7;
     -webkit-transition: 0.2s;
@@ -178,11 +178,71 @@ header h2 {
 
 .song .author {
     font-size: 12px;
-    color: #999;
+    color: var(--primary-color);
 }
 
 .song .option {
     padding: 16px 8px;
     color: #999;
     font-size: 18px;
+}
+
+/* custom */
+body {
+    background-image: linear-gradient(280deg,#0A0068, #42008D, #5E00A0);
+}
+header h2, .title {
+    -webkit-text-fill-color: transparent;
+    background: -webkit-linear-gradient(45deg, #38b6ff, #d08dfc);
+    -webkit-background-clip: text;
+}
+.dashboard {
+    background-image: linear-gradient(280deg,#0A0068, #42008D, #5E00A0);
+}
+.cd {
+    /* box-shadow: inset -4px -4px 10px #310366,
+    inset 4px 4px 10px #8f10ca; */
+    border-radius: 50%;
+    box-shadow: 4px 4px 10px -1px rgb(3, 2, 80),
+    -4px -4px 10px -1px rgba(222, 84, 250, 0.7);
+    padding: 6px;
+}
+
+.btn-toggle-play {
+    box-shadow: -4px -4px 16px #c858fc,
+    4px 4px 16px #010257,
+    inset 4px 4px 16px #c858fc,
+    inset -4px -4px 16px #010257;
+}
+
+.control .btn.active {
+    text-shadow: 0 0 50px #fff;
+}
+
+.playlist {
+    background-image: linear-gradient(260deg,#0A0068, #42008D, #5E00A0);
+}
+
+.song {
+    background-color: unset;
+    box-shadow: 4px 4px 6px -1px rgb(74, 1, 92),
+    -4px -4px 6px -1px rgba(222, 84, 250, 0.7);
+    padding: 6px;
+}
+
+.progress {
+    /* background-color: #fff; */
+    border-radius: 28px;
+    /* box-shadow: inset 4px 4px 16px -1px rgba(0, 0, 0, 0.15),
+    inset -4px -4px 16px -1px rgb(255, 255, 255); */
+    box-shadow: 0 0 14px #fff;
+    padding: 4px;
+}
+.progress::-webkit-slider-thumb {
+    padding: 10px;
+    border-radius: 50%;
+    box-shadow: -4px -4px 20px #ba2ffa,
+    4px 4px 20px rgb(67, 1, 87),
+    inset 4px 4px 20px #ba2ffa,
+    inset -4px -4px 20px rgb(67, 1, 87);
 }
